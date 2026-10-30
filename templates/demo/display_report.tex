@@ -103,9 +103,16 @@ BLOCK dynatable;
 <?lsmb
     FOREACH ROW IN tbody.rows;
         FOREACH COL IN VISIBLE;
-            ?>\begin{tabular}[t]{@{}l@{}}<?lsmb
-                ROW.${COL.col_id};
-            ?>\end{tabular}<?lsmb
+            IF COL.money;
+                V = ROW.${COL.col_id};  # Don't display 0 or 0.00
+                IF V.replace('[^1-9]', '') != '';
+                    V.replace('(\d)(?=(\d{3})+\.)', '$1,');
+                END;
+            ELSE;
+                ?>\begin{tabular}[t]{@{}l@{}}<?lsmb
+                    ROW.${COL.col_id};
+                ?>\end{tabular}<?lsmb
+            END;
             IF loop.last();
                 '\tabularnewline';
             ELSE;
